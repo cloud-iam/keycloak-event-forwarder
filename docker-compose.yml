@@ -1,0 +1,72 @@
+# Local playground: Keycloak with the plugin (built in target/) + RabbitMQ.
+#
+#   mvn package
+#   docker compose up
+#
+# Keycloak UI:  http://localhost:8080  (admin/admin)
+# RabbitMQ UI:  http://localhost:15672 (admin/admin)
+#
+# Enable the listener in Keycloak: Realm settings > Events > Event listeners > event-forwarder
+services:
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak -d keycloak" ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_LOG_LEVEL: INFO,io.github.cloudiam:TRACE,com.rabbitmq:TRACE
+      KC_METRICS_ENABLED: "true"
+      KC_HTTP_MANAGEMENT_PORT: "9000"
+      EVENT_FORWARDER_AMQP_URL: rabbitmq
+      EVENT_FORWARDER_AMQP_PORT: "5672"
+      EVENT_FORWARDER_AMQP_VHOST: /
+      EVENT_FORWARDER_AMQP_USERNAME: admin
+      EVENT_FORWARDER_AMQP_PASSWORD: admin
+      EVENT_FORWARDER_AMQP_EXCHANGE: amq.topic
+      EVENT_FORWARDER_INCLUDED_USER_EVENTS: all
+      EVENT_FORWARDER_INCLUDE_ADMIN_EVENTS: true
+      EVENT_FORWARDER_ASYNC_RECEIVER_QUEUE_MAX_SIZE: 65536
+      EVENT_FORWARDER_ASYNC_RECEIVER_WHEN_FULL: DROP
+      EVENT_FORWARDER_SERIALIZER_JSON_IS_PRETTY: false
+      EVENT_FORWARDER_MAX_SEND_PER_SECOND: 20
+    volumes:
+      - ./target/keycloak-event-forwarder.jar:/opt/keycloak/providers/keycloak-event-forwarder.jar:ro
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy

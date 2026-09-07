@@ -1,0 +1,16 @@
+Keycloak Event Forwarder
+Copyright 2026 Cloud-IAM
+
+This product includes software developed at Cloud-IAM (https://www.cloud-iam.com).
+
+The AMQP topic routing key scheme it publishes with (KK.EVENT.CLIENT.* and KK.EVENT.ADMIN.*) follows
+the convention established by keycloak-event-listener-rabbitmq
+(https://github.com/aznamier/keycloak-event-listener-rabbitmq), licensed under the Apache License,
+Version 2.0. Keeping the same scheme is deliberate, so a consumer already bound to those keys works
+unchanged.
+
+This product bundles the RabbitMQ Java Client (com.rabbitmq:amqp-client) in its distributed jar.
+RabbitMQ Java Client, Copyright (c) Broadcom. All Rights Reserved. The term Broadcom refers to
+Broadcom Inc. and/or its subsidiaries. It is triple-licensed by its authors under the Apache License
+2.0, the Mozilla Public License 2.0 and the GNU General Public License v2, and is redistributed here
+under the Apache License, Version 2.0. See THIRD-PARTY-NOTICES.md.

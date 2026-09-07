@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # amqp-client is bundled into the provider jar, so a CVE on it is ours to ship a fix for.
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    ignore:
+      # Both are `provided`: the Keycloak runtime supplies them, we only compile against them. They
+      # must stay at or below the version bundled by the OLDEST Keycloak we support, so raising them
+      # is always the wrong direction. A green build proves nothing here: the tests run against the
+      # version Maven resolves, never against the one Keycloak will actually load, so an API added in
+      # a newer release compiles fine and then fails at runtime with NoSuchMethodError.
+      # Keycloak 26.3 ships micrometer 1.14.5, Keycloak 26.7 ships 1.16.6.
+      - dependency-name: io.micrometer:micrometer-core
+      - dependency-name: org.slf4j:slf4j-api
+      # Test-only logger, kept on the same version as the slf4j-api we compile against so the
+      # tests never run a provider newer than the API.
+      - dependency-name: org.slf4j:slf4j-simple
+      # Bundled into the provider jar, so security updates matter here and must NOT be ignored.
+      # But check what a new version drags in before merging: 5.35.0 made Netty a non-optional
+      # dependency, which would unpack a second Netty into a jar loaded next to the one Keycloak
+      # already runs on. Kept on 5.23.0 for that reason.
+      # - dependency-name: com.rabbitmq:amqp-client   <- deliberately NOT ignored
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
