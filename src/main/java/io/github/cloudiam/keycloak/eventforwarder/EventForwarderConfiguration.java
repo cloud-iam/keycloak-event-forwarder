@@ -32,6 +32,7 @@ public class EventForwarderConfiguration {
     private String password;
     private String vhost;
     private Boolean useTls;
+    private Boolean tlsInsecure;
     private Integer connectionTimeout;
     private Integer handshakeTimeout;
 
@@ -98,6 +99,8 @@ public class EventForwarderConfiguration {
         cfg.password = resolveConfigVar(config, "amqp_password", "admin");
         cfg.vhost = resolveConfigVar(config, "amqp_vhost", "");
         cfg.useTls = Boolean.valueOf(resolveConfigVar(config, "amqp_use_tls", "false"));
+        // escape hatch for a test broker with a self-signed certificate; never for production
+        cfg.tlsInsecure = Boolean.valueOf(resolveConfigVar(config, "amqp_tls_insecure", "false"));
         cfg.connectionTimeout = Integer.valueOf(resolveConfigVar(config, "amqp_connection_timeout", String.valueOf(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)));
         cfg.handshakeTimeout = Integer.valueOf(resolveConfigVar(config, "amqp_handshake_timeout", String.valueOf(ConnectionFactory.DEFAULT_HANDSHAKE_TIMEOUT)));
 
@@ -229,6 +232,14 @@ public class EventForwarderConfiguration {
 
     public Boolean getUseTls() {
         return useTls;
+    }
+
+    public Boolean getTlsInsecure() {
+        return tlsInsecure;
+    }
+
+    public void setTlsInsecure(Boolean tlsInsecure) {
+        this.tlsInsecure = tlsInsecure;
     }
 
     public void setUseTls(Boolean useTls) {

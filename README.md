@@ -147,11 +147,19 @@ Connection (AMQP):
   - `EVENT_FORWARDER_AMQP_PASSWORD` - default: *admin*
   - `EVENT_FORWARDER_AMQP_CONNECTION_TIMEOUT` - default: *60000*
   - `EVENT_FORWARDER_AMQP_HANDSHAKE_TIMEOUT` - default: *10000*
-  - `EVENT_FORWARDER_AMQP_USE_TLS` - default: *false*
-  - `EVENT_FORWARDER_AMQP_KEY_STORE` - default: *empty*
-  - `EVENT_FORWARDER_AMQP_KEY_STORE_PASS` - default: *empty*
-  - `EVENT_FORWARDER_AMQP_TRUST_STORE` - default: *empty*
+  - `EVENT_FORWARDER_AMQP_USE_TLS` - default: *false* - connect over TLS. The broker certificate is
+    verified against the JVM trust store and must match the host you connected to. A TLS setup that
+    cannot be honoured fails the startup rather than falling back to an unverified connection.
+  - `EVENT_FORWARDER_AMQP_TRUST_STORE` - default: *empty* - path to a trust store holding your private
+    CA, when the broker certificate is not signed by a publicly trusted one. PKCS12 and JKS are both
+    accepted; the format follows the file extension, `.jks` for JKS and anything else for PKCS12.
   - `EVENT_FORWARDER_AMQP_TRUST_STORE_PASS` - default: *empty*
+  - `EVENT_FORWARDER_AMQP_KEY_STORE` - default: *empty* - client key store for mutual TLS, same format
+    rule as the trust store
+  - `EVENT_FORWARDER_AMQP_KEY_STORE_PASS` - default: *empty*
+  - `EVENT_FORWARDER_AMQP_TLS_INSECURE` - default: *false* - accept any broker certificate without
+    verification. Encrypted but open to interception, so it exists only to reach a test broker with a
+    self-signed certificate. It logs a warning on every startup.
 
 Event selection and delivery:
   - `EVENT_FORWARDER_INCLUDED_USER_EVENTS` - default: `*` - comma-separated list of

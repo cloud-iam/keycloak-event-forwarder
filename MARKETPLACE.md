@@ -154,11 +154,12 @@ When a variable is not set, its default applies.
 | `EVENT_FORWARDER_AMQP_PASSWORD` | Broker password (never written to logs) | `admin` |
 | `EVENT_FORWARDER_AMQP_CONNECTION_TIMEOUT` | TCP connection timeout (ms) | `60000` |
 | `EVENT_FORWARDER_AMQP_HANDSHAKE_TIMEOUT` | AMQP handshake timeout (ms) | `10000` |
-| `EVENT_FORWARDER_AMQP_USE_TLS` | Connect over TLS | `false` |
+| `EVENT_FORWARDER_AMQP_USE_TLS` | Connect over TLS, verifying the broker certificate and host name | `false` |
 | `EVENT_FORWARDER_AMQP_KEY_STORE` | Path to a client key store (mutual TLS) | *empty* |
 | `EVENT_FORWARDER_AMQP_KEY_STORE_PASS` | Key store password | *empty* |
-| `EVENT_FORWARDER_AMQP_TRUST_STORE` | Path to a trust store (custom CA) | *empty* |
+| `EVENT_FORWARDER_AMQP_TRUST_STORE` | Path to a trust store (custom CA), PKCS12 or JKS by file extension | *empty* |
 | `EVENT_FORWARDER_AMQP_TRUST_STORE_PASS` | Trust store password | *empty* |
+| `EVENT_FORWARDER_AMQP_TLS_INSECURE` | Accept any broker certificate without verifying it. Encrypted but interceptable, for a test broker only. | `false` |
 
 ### Event selection & delivery
 
@@ -322,7 +323,9 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
 - **No login impact**: a passive event listener. It observes events and never gates authentication.
 - **Credentials & secrets**: the broker password is read from configuration and is **never written to logs** (it is the one config value excluded from the startup config dump).
   Provide it via an environment variable sourced from your secret manager.
-- **TLS in transit**: set `EVENT_FORWARDER_AMQP_USE_TLS=true` and, if your broker uses a private CA, point `EVENT_FORWARDER_AMQP_TRUST_STORE` at it.
+- **TLS in transit**: set `EVENT_FORWARDER_AMQP_USE_TLS=true`. The broker certificate is verified against the JVM trust store and must match the host you connected to.
+  If your broker uses a private CA, point `EVENT_FORWARDER_AMQP_TRUST_STORE` at it (PKCS12 or JKS).
+  A TLS setup that cannot be honoured fails the startup instead of silently falling back to an unverified connection.
   Mutual TLS is supported via the client key store settings.
 - **Replay endpoint is protected**: the `events-replay` API requires a Bearer token with the `manage-events` realm-management role, issued by the target realm.
 - **GDPR / data minimization**: Keycloak events can contain personal data (usernames, IP addresses, email in some events).
