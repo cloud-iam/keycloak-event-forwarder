@@ -11,7 +11,7 @@ the jar at `META-INF/LICENSE`.
 Every other dependency (Keycloak, SLF4J, Micrometer) is `provided`: it is used at compile time and
 supplied by the Keycloak runtime, so none of it is redistributed by this project.
 
-## com.rabbitmq:amqp-client 5.23.0
+## com.rabbitmq:amqp-client 5.35.0
 
 RabbitMQ Java Client, Copyright (c) Broadcom. All Rights Reserved. The term Broadcom refers to
 Broadcom Inc. and/or its subsidiaries.
@@ -19,6 +19,9 @@ Broadcom Inc. and/or its subsidiaries.
 Triple-licensed by its authors under the Apache License, Version 2.0, the Mozilla Public License 2.0
 and the GNU General Public License, version 2. This project redistributes it under the **Apache
 License, Version 2.0**, whose full text is in `LICENSE`.
+
+Its optional Netty transport is excluded from this project's dependencies, so no Netty class is
+bundled: the extension uses the default blocking socket transport.
 
 - Project: https://github.com/rabbitmq/rabbitmq-java-client
 - Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0.html

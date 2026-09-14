@@ -27,7 +27,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
 
         <keycloak.version>26.7.3</keycloak.version>
-        <amqp-client.version>5.23.0</amqp-client.version>
+        <amqp-client.version>5.35.0</amqp-client.version>
         <micrometer-core.version>1.10.5</micrometer-core.version>
         <slf4j-api.version>2.0.6</slf4j-api.version>
 
@@ -96,6 +96,22 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <!-- Netty backs an alternative frame handler this extension never selects. Keeping it
+                     would unpack 1861 more classes into the provider jar, next to the Netty that
+                     Keycloak already runs on, so it is excluded and the default blocking socket
+                     transport is used. Verified end to end against a real broker. -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
