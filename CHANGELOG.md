@@ -9,9 +9,12 @@ The public contract covered by versioning is the provider id (`event-forwarder`)
 
 ## [Unreleased]
 
-Everything below will ship as `1.0.0`, the first public release. The extension itself is not new: it
-has been running on the Cloud-IAM managed Keycloak, and this is its extraction into a standalone
-open-source project.
+Nothing yet.
+
+## [1.0.0] - 2026-09-14
+
+First public release. The extension itself is not new: it has been running on the Cloud-IAM managed
+Keycloak, and this is its extraction into a standalone open-source project.
 
 ### Added
 
@@ -48,4 +51,5 @@ Two differences matter if you move from one to the other:
 - **No platform inventory hook.** This jar does not register with the Cloud-IAM extension inventory,
   so it does not appear under the platform's extension listing.
 
-[Unreleased]: https://github.com/cloud-iam/keycloak-event-forwarder/commits/main
+[Unreleased]: https://github.com/cloud-iam/keycloak-event-forwarder/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/cloud-iam/keycloak-event-forwarder/releases/tag/v1.0.0
