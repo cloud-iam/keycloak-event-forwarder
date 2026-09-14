@@ -1,0 +1,9 @@
+# Every change needs a review from the maintainers.
+*       @cloud-iam/keycloak-extensions
+
+# The security-sensitive surfaces: the broker connection and TLS setup, and the replay endpoint.
+/src/main/java/io/github/cloudiam/keycloak/eventforwarder/sender/AMQPConnectionFactory.java @cloud-iam/keycloak-extensions
+/src/main/java/io/github/cloudiam/keycloak/eventforwarder/replay/ @cloud-iam/keycloak-extensions
+/SECURITY.md @cloud-iam/keycloak-extensions
+/LICENSE @cloud-iam/keycloak-extensions
+/NOTICE @cloud-iam/keycloak-extensions

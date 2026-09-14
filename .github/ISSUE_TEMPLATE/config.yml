@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a vulnerability
+    url: https://github.com/cloud-iam/keycloak-event-forwarder/blob/main/SECURITY.md
+    about: Never in a public issue. Follow the security policy so we can fix it first.
+  - name: Cloud-IAM managed deployments
+    url: https://console.cloud-iam.com
+    about: Support for the extension running on a Cloud-IAM deployment, not for the open-source jar.

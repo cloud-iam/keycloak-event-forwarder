@@ -1,0 +1,53 @@
+name: Bug report
+description: Something does not behave as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report a suspected vulnerability here. Follow
+        [SECURITY.md](https://github.com/cloud-iam/keycloak-event-forwarder/blob/main/SECURITY.md)
+        instead, so we can fix it before it is public.
+
+        **Never paste your broker credentials**, and strip them from any log you attach.
+  - type: input
+    id: extension-version
+    attributes:
+      label: Extension version
+      description: The release you installed, or the commit you built from.
+    validations:
+      required: true
+  - type: input
+    id: keycloak-version
+    attributes:
+      label: Keycloak version
+      placeholder: "26.7.3"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happens
+    attributes:
+      label: What happens, and what you expected instead
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The steps, and what the broker side looks like (exchange, queue, binding key).
+    validations:
+      required: true
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Configuration
+      description: The EVENT_FORWARDER_* variables you set, with the password removed.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server log around the failure
+      description: Raise it with KC_LOG_LEVEL=INFO,io.github.cloudiam:DEBUG if you can.
+      render: shell
