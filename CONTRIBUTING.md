@@ -63,6 +63,9 @@ The git tag is the version. Tag the commit you want to ship as `vX.Y.Z` and push
 project version from the tag, builds it, and publishes a GitHub release with the provider jar
 attached. The POM stays on `-SNAPSHOT` on the branch, so a release never needs a version-bump commit.
 
+Before tagging, move the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) under the version you
+are about to ship.
+
 ```sh
 git tag v1.0.0 && git push origin v1.0.0
 ```
