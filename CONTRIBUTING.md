@@ -11,9 +11,14 @@ You need **JDK 21** and Maven. Nothing else: every other dependency is fetched f
 mvn verify
 ```
 
-That compiles, runs the unit tests and assembles the provider jar at
+That compiles, runs the unit tests, checks coverage and assembles the provider jar at
 `target/keycloak-event-forwarder.jar`. The jar is an uber jar: it contains the RabbitMQ client, and
 everything else it needs (Keycloak, SLF4J, Micrometer) is supplied by the Keycloak runtime.
+
+Coverage is measured by JaCoCo and reported at `target/site/jacoco/index.html`. The build fails below
+85 percent overall. That number is a floor meant to catch a change that guts the tests, not a target to
+chase: a pull request that adds untested behavior will be asked for tests well before it moves the
+needle.
 
 ## Try your change on a real Keycloak
 
