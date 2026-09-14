@@ -1,5 +1,10 @@
 # Keycloak Event Forwarder Extension
 
+[![build](https://github.com/cloud-iam/keycloak-event-forwarder/actions/workflows/build.yml/badge.svg)](https://github.com/cloud-iam/keycloak-event-forwarder/actions/workflows/build.yml)
+[![release](https://img.shields.io/github/v/release/cloud-iam/keycloak-event-forwarder?sort=semver)](https://github.com/cloud-iam/keycloak-event-forwarder/releases/latest)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Keycloak](https://img.shields.io/badge/Keycloak-26.3%2B-brightgreen)](#compatibility)
+
 ##### A Keycloak SPI plugin that publishes events to a RabbitMQ server.
 
 The `event-forwarder` event listener is a buffered pipeline: events are serialized to JSON,
@@ -105,15 +110,38 @@ minor is compiled and unit-tested in CI, so a breaking change in the Keycloak SP
 failed build rather than a broken deployment. The build targets the newest supported version by
 default; build against another with `mvn package -Dkeycloak.version=26.3.5`.
 
-## USAGE:
-1. Build from source: ``mvn clean package``
-2. Copy `target/keycloak-event-forwarder.jar` into your Keycloak: `/opt/keycloak/providers/`
-3. Configure through environment variables (see below)
-4. Restart the Keycloak server
-5. Enable the listener in the Keycloak UI by adding **event-forwarder**  
- `Manage > Events > Config > Events Config > Event Listeners`
+## Install
 
-#### Try it locally
+Download the jar from the [latest release](https://github.com/cloud-iam/keycloak-event-forwarder/releases/latest)
+and drop it into your Keycloak:
+
+```sh
+curl -LO https://github.com/cloud-iam/keycloak-event-forwarder/releases/latest/download/keycloak-event-forwarder.jar
+cp keycloak-event-forwarder.jar /opt/keycloak/providers/
+```
+
+Then:
+
+1. Set the broker connection variables (see [Configuration](#configuration)), at minimum
+   `EVENT_FORWARDER_AMQP_URL` and the credentials.
+2. Restart Keycloak.
+3. Enable the listener: **Realm settings > Events > Event listeners**, add **`event-forwarder`**, save.
+4. On your broker, bind a queue to the `amq.topic` exchange with the routing key `KK.EVENT.#`, then log
+   in and out of Keycloak and watch the events arrive.
+
+The jar is self-contained: it bundles the RabbitMQ client and needs nothing else at runtime.
+
+### Build it yourself
+
+You only need this to change the code or to build from a specific commit. It requires JDK 21:
+
+```sh
+mvn clean package
+```
+
+The provider jar lands at `target/keycloak-event-forwarder.jar`.
+
+### Try it locally
 
 A docker compose playground starts a Keycloak with the plugin and a RabbitMQ, linked together:
 
@@ -128,7 +156,7 @@ docker compose up
 Enable the listener (step 5 above), bind a queue to `amq.topic` with the routing key `KK.EVENT.#`
 in the RabbitMQ UI, then log in or out of Keycloak and watch the events arrive.
 
-#### Configuration
+## Configuration
 
 Every variable can be set as an environment variable, or as an SPI provider property
 (the lowercase name without the `EVENT_FORWARDER_` prefix, e.g. `--spi-events-listener-event-forwarder-amqp-url=...`).
@@ -186,7 +214,7 @@ Routing and message format:
   - `EVENT_FORWARDER_AMQP_ADMIN_TYPE_ID` - default: `org.keycloak.events.admin.AdminEvent` - value of the
     `__TypeId__` AMQP header on admin-event messages
 
-#### Replaying events
+## Replaying events
 
 Previously saved events can be replayed to RabbitMQ, e.g. after an outage longer than the buffer
 could absorb. Prerequisite: event storage must be enabled for the realm (**Realm settings > Events**:
@@ -209,7 +237,7 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
 * the returned counts are events enqueued. With the `DROP` policy some may still be dropped if the
   buffer fills up (watch `keycloak_extensions_event_forwarder_dropped_total` in Prometheus)
 
-#### Monitoring
+## Monitoring
 
 The plugin exports the following metrics to Micrometer (global registry):
 
